@@ -1,0 +1,15 @@
+<h1><%=t :'activity_log.activities.header' %></h1>
+<ul id="activities">
+<% for activity_entry in @activity_entries %>
+<li class="activity">
+<span class="activity-account"><%=h activity_entry.account.login if activity_entry.account %></span>
+<span class="activity-action"><%=h activity_entry.action %></span>
+on
+<span class="activity-label"><%=h activity_entry.entity.activity_log_label %></span>
+<span class="activity-time">
+<span class="activity-time-distance">vor <%=h distance_of_time_in_words_to_now(activity_entry.created_at) %></span>
+<span class="activity-time-date"><%=l activity_entry.created_at %></span>
+</span>
+</li>
+<% end %>
+</ul>
