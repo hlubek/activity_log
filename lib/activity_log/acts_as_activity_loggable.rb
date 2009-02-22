@@ -10,6 +10,10 @@ module ActivityLog
     # Note: acts_as_activity_loggable has to be called *after* defining the methods.
     def acts_as_activity_loggable(methods, options = {})
       send :include, InstanceMethods
+
+      options = {
+        :user => nil
+      }.merge(options)
       
       cattr_accessor :loggable_activities
       self.loggable_activities = methods.to_a
@@ -26,9 +30,9 @@ module ActivityLog
             @activity_log_stack.pop
           end
           if @activity_log_stack.empty?
-            ActivityEntry.create!(:action => method, :entity_id => self.id, :entity_type => self.class.to_s)
-          else
-            logger.debug "Omitted call for #{method} with non-empty stack"
+            user = options[:load_user].call if options[:load_user]
+            user_id = user.id unless user.nil?
+            ActivityEntry.create!(:action => method, :entity_id => self.id, :entity_type => self.class.to_s, :account_id => user_id)
           end
         end
         alias_method_chain (method + symbol), :log # ??? works only after defining the method to be chained

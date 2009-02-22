@@ -1,5 +1,11 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
+class User
+  def id
+    42
+  end
+end
+
 class Thingybob < ActiveRecord::Base
   attr_reader :activity_log_stack
 
@@ -18,7 +24,8 @@ class Thingybob < ActiveRecord::Base
     update_attribute(:name, "Bzz!")
   end
 
-  acts_as_activity_loggable [:create, :update, :foo, :bar, :'bzz!']
+  acts_as_activity_loggable [:create, :update, :foo, :bar, :'bzz!'],
+  	:load_user => lambda { User.new }
 end
 
 class ActsAsActivityLoggableTest < Test::Unit::TestCase
@@ -38,7 +45,7 @@ class ActsAsActivityLoggableTest < Test::Unit::TestCase
   end
   
   def test_thingybob_custom_method_log_without_stacking
-    bob = Thingybob.create(:name => 'Foo') # activity create
+    bob = Thingybob.create(:name => 'Foo')
     bob.foo
     
     activity_log = bob.activity_log
@@ -46,7 +53,7 @@ class ActsAsActivityLoggableTest < Test::Unit::TestCase
   end
   
   def test_no_log_with_exception
-    bob = Thingybob.create(:name => 'Foo') # activity create
+    bob = Thingybob.create(:name => 'Foo')
     begin
       bob.bar
     rescue
@@ -59,7 +66,7 @@ class ActsAsActivityLoggableTest < Test::Unit::TestCase
   end
   
   def test_stack_cleared_after_exception
-    bob = Thingybob.create(:name => 'Foo') # activity create
+    bob = Thingybob.create(:name => 'Foo')
     begin
       bob.bar
     rescue
@@ -68,10 +75,17 @@ class ActsAsActivityLoggableTest < Test::Unit::TestCase
   end
   
   def test_method_with_exclamation_mark
-    bob = Thingybob.create(:name => 'Foo') # activity create
+    bob = Thingybob.create(:name => 'Foo')
     bob.bzz!
     
     activity_log = bob.activity_log
     assert_equal %w(create bzz), activity_log.map{|a| a.action}
+  end
+  
+  def test_logs_user_if_load_user_option_is_set
+    bob = Thingybob.create(:name => 'Foo')
+    
+    activity_log = bob.activity_log
+    assert_equal 42, activity_log.last.account_id, 'User was not loaded'
   end
 end
