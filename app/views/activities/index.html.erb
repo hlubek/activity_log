@@ -7,7 +7,7 @@
 on
 <span class="activity-label"><%=h activity_entry.entity.activity_log_label %></span>
 <span class="activity-time">
-<span class="activity-time-distance">vor <%=h distance_of_time_in_words_to_now(activity_entry.created_at) %></span>
+<span class="activity-time-distance"><%=h distance_of_time_in_words_to_now(activity_entry.created_at) %> ago</span>
 <span class="activity-time-date"><%=l activity_entry.created_at %></span>
 </span>
 </li>

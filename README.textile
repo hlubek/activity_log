@@ -12,6 +12,16 @@ used for custom methods too.
 If you want to keep track of changes (actually not _what_ is changed, but _that_ something was
 changed) this plugin might be helpful.
 
+h2. Features
+
+* Track calls to active record methods with time, user and polymorphic record
+* Capture custom methods and log their calls
+* Get activities of an record
+* Get recent activities of all records
+* Method calls don't get stacked up, so a custom method doesn't log an update for example
+* Activity logging works for transactions: if something goes wrong, it isn't logged
+* A simple controller and view are included
+
 h2. Installation
 
 <pre>
