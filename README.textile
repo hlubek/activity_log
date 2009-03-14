@@ -18,6 +18,7 @@ h2. Installation
 script/plugin install git://github.com/chlu/activity_log.git
 </pre>
 
+* Run the plugin migration: @rake db:migrate:plugins@
 * Add an @acts_as_activity_loggable@ call to your active record class at the _bottom_
 * Customize the activity view and controller
 
