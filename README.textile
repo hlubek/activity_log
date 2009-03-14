@@ -1,0 +1,63 @@
+h1. Activity log
+
+bq. "There is nothing so terrible as activity without insight."
+-- Johann Wolfgang von Goethe 
+
+h2. What is it about?
+
+The activity log plugin enables an Rails application to log actions on records. This is
+not restricted to the default @create@, @update@, @delete@ methods, but can be
+used for custom methods too.
+
+If you want to keep track of changes (actually not _what_ is changed, but _that_ something was
+changed) this plugin might be helpful.
+
+h2. Installation
+
+<pre>
+script/plugin install git://github.com/chlu/activity_log.git
+</pre>
+
+* Add an @acts_as_activity_loggable@ call to your active record class at the _bottom_
+* Customize the activity view and controller
+
+h2. Example
+
+h3. In your model:
+
+<pre>
+class Thingybob < ActiveRecord::Base
+  def foo
+    # Do something useful here
+  end
+
+  # If something goes wrong inside a method, it isn't tracked  
+  def bar
+    transaction do
+      foo
+      raise "Barrr!"
+    end
+  end
+  
+  # Activity entries don't stack, so a "bzz!" doesn't create an "update" entry
+  def bzz!
+    self.name = "Bzz!"
+    save
+  end
+
+  # This is the magic. If you show your current user object, it will be tracked
+  acts_as_activity_loggable [:create, :update, :foo, :bar, :'bzz!'],
+  	:load_user => lambda { User.current }
+end
+</pre>
+
+h3. In your controller (or model):
+
+<pre>
+bob = Thingybob.find(id)
+@last_action = bob.activity_log.last.action
+</pre>
+
+h2. Copyright
+
+Copyright (c) 2009 [Christopher Hlubek] http://www.resoap.com, released under the MIT license
