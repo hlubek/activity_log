@@ -69,6 +69,14 @@ bob = Thingybob.find(id)
 @last_action = bob.activity_log.last.action
 </pre>
 
+h2. Issues
+
+* The @acts_as_activity_loggable@ has to be placed at the bottom of the class to allow for
+  aliasing of non active record methods. Is there a way of executing the code inside
+  @acts_as_activity_loggable@ after the methods are declared and still placing it at the top?
+* The name of the user association is not configurable and currently set to "Account". This
+  should be configurable by a plugin generator and default to "User".
+
 h2. Copyright
 
 Copyright (c) 2009 [Christopher Hlubek] http://www.resoap.com, released under the MIT license
